@@ -4,9 +4,15 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     private VirtualJoystick virtualJoystick;
+
+    public bool m_grounded = true;
+    float m_jumpForce = 7.5f;
     private float moveSpeed = 5;
     private float m_timeSinceAttack;
+    private float startingHeight;
+    private float maxHeight;
     private int m_currentAttack;
+    private Rigidbody2D m_body2d;
 
     Animator anim;
 
@@ -15,9 +21,25 @@ public class PlayerController : MonoBehaviour
     public void Start()
     {
         anim = GetComponent<Animator>();
+        m_body2d = GetComponent<Rigidbody2D>();
     }
     private void Update()
     {
+        if(m_grounded == false)
+        {
+            if (transform.position.y > maxHeight)
+            {
+                maxHeight = transform.position.y;                              
+            }           
+            if (maxHeight - transform.position.y > maxHeight - startingHeight)
+            {
+                m_grounded = true;
+                anim.SetBool("Grounded", m_grounded);
+                m_body2d.gravityScale = 0;                
+                m_body2d.Sleep();                
+            }
+        }
+        anim.SetFloat("AirSpeedY", m_body2d.velocity.y);
         m_timeSinceAttack += Time.deltaTime;
 
         float x = virtualJoystick.Horizontal;   // ÁÂ/¿ì ÀÌµ¿
@@ -34,8 +56,10 @@ public class PlayerController : MonoBehaviour
                 GetComponent<SpriteRenderer>().flipX = true;
             }
 
-            anim.SetInteger("AnimState", 1);
-            transform.position += new Vector3(x, y, 0).normalized * moveSpeed * Time.deltaTime;
+            anim.SetInteger("AnimState", 1);            
+            Vector3 move = new Vector3(x, y, 0).normalized * moveSpeed * Time.deltaTime;
+            transform.position += move;
+            startingHeight += move.y;
         }
         else
         {
@@ -76,7 +100,18 @@ public class PlayerController : MonoBehaviour
 
     public void Action3()
     {
-        anim.SetBool("noBlood", false);
+        if(m_grounded == true)
+        {
+            startingHeight = transform.position.y;
+            maxHeight = transform.position.y;
+
+            anim.SetTrigger("Jump");
+            m_grounded = false;
+            anim.SetBool("Grounded", m_grounded);
+            m_body2d.gravityScale = 1f;
+            m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);            
+        }
+        
     }
 }
 
