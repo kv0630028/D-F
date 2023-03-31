@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     private float m_timeSinceAttack;
     private float startingHeight;
     private float maxHeight;
-    private int m_currentAttack;
+    public int m_currentAttack = 1;
     private Rigidbody2D m_body2d;
 
     Animator anim;
@@ -68,8 +68,6 @@ public class PlayerController : MonoBehaviour
     }
     public void Action1()
     {
-        m_currentAttack++;
-
         if (m_timeSinceAttack >= 0.25f)
         {
             // Loop back to one after third attack
@@ -77,11 +75,12 @@ public class PlayerController : MonoBehaviour
                 m_currentAttack = 1;
 
             // Reset Attack combo if time since last attack is too large
-            if (m_timeSinceAttack > 1.0f)
+            if (m_timeSinceAttack > 0.6f)
                 m_currentAttack = 1;
 
             // Call one of three attack animations "Attack1", "Attack2", "Attack3"
             anim.SetTrigger("Attack" + m_currentAttack);
+            m_currentAttack++;
 
             // Reset timer
             m_timeSinceAttack = 0.0f;
