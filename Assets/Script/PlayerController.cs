@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
             {
                 maxHeight = transform.position.y;                              
             }           
+
             if (maxHeight - transform.position.y > maxHeight - startingHeight)
             {
                 m_grounded = true;
@@ -38,6 +39,12 @@ public class PlayerController : MonoBehaviour
                 m_body2d.gravityScale = 0;                
                 m_body2d.Sleep();                
             }
+        }
+        else
+        {
+            float positionX = Mathf.Clamp(transform.position.x, -10, 10);
+            float positionY = Mathf.Clamp(transform.position.y, 1, 5);
+            transform.position = new Vector2(positionX, positionY);            
         }
         anim.SetFloat("AirSpeedY", m_body2d.velocity.y);
         m_timeSinceAttack += Time.deltaTime;
