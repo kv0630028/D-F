@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     private float m_timeSinceAttack;
     private float startingHeight;
     private float maxHeight;
-    public int m_currentAttack = 1;
+    private int m_currentAttack = 1;
     private Rigidbody2D m_body2d;
 
     Animator anim;
@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
                 m_body2d.gravityScale = 0;                
                 m_body2d.Sleep();                
             }
+            float positionX = Mathf.Clamp(transform.position.x, -10, 10);            
+            transform.position = new Vector2(positionX, transform.position.y);
         }
         else
         {
